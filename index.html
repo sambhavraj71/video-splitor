@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Video Splitter</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: white;
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            color: #00ff66;
+        }
+
+        .header p {
+            color: #aeb7cc;
+        }
+
+        .card {
+            background: #141b2f;
+            border: 1px solid #293451;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #435070;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-box:hover {
+            border-color: #00ff66;
+            background: #18243a;
+        }
+
+        .upload-box input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-box h3 {
+            margin-bottom: 8px;
+        }
+
+        .upload-box p {
+            color: #9ca8c0;
+            font-size: 14px;
+        }
+
+        .video-wrapper {
+            display: none;
+            margin-top: 20px;
+        }
+
+        video {
+            width: 100%;
+            max-height: 450px;
+            border-radius: 12px;
+            background: black;
+        }
+
+        .video-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+            color: #aeb7cc;
+            font-size: 14px;
+        }
+
+        .settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #b9c2d5;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #394663;
+            background: #0e1528;
+            color: white;
+            border-radius: 9px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .field input:focus {
+            border-color: #00ff66;
+        }
+
+        .quick-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-buttons button {
+            background: #202b45;
+            color: white;
+            border: 1px solid #3c4965;
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .quick-buttons button:hover {
+            border-color: #00ff66;
+        }
+
+        .start-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00ff66, #00d9ff);
+            color: #06100b;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-section {
+            display: none;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #c5cee0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #252e43;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff66, #00c8ff);
+            transition: width 0.2s;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            color: #00ff66;
+            font-size: 14px;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .download-all {
+            border: none;
+            background: #6c2cff;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .part {
+            background: #0e1528;
+            border: 1px solid #293451;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .part-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .part-name {
+            font-weight: bold;
+        }
+
+        .part-duration {
+            color: #8f9bb3;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .download-btn {
+            background: #00c853;
+            color: #06100b;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .message {
+            display: none;
+            background: #341b1b;
+            border: 1px solid #743535;
+            color: #ff9d9d;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .settings {
+                grid-template-columns: 1fr;
+            }
+
+            .results-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .part-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .download-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Video <span>Splitter</span></h1>
+        <p>Split your long video into multiple smaller parts</p>
+    </div>
+
+    <!-- Upload -->
+    <div class="card">
+
+        <label class="upload-box" for="videoInput">
+
+            <input
+                type="file"
+                id="videoInput"
+                accept="video/*"
+            >
+
+            <div class="upload-icon">🎬</div>
+
+            <h3>Upload Your Video</h3>
+
+            <p>
+                Click here and select your 10–12 minute video
+            </p>
+
+        </label>
+
+        <div class="video-wrapper" id="videoWrapper">
+
+            <video
+                id="video"
+                controls
+            ></video>
+
+            <div class="video-info">
+                <span id="fileName">No file</span>
+                <span id="videoDuration">00:00</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Error -->
+    <div class="message" id="message"></div>
+
+
+    <!-- Settings -->
+    <div class="card">
+
+        <h2 style="margin-bottom:20px;">
+            Split Settings
+        </h2>
+
+        <div class="settings">
+
+            <div class="field">
+
+                <label>
+                    Split Every (seconds)
+                </label>
+
+                <input
+                    type="number"
+                    id="splitSeconds"
+                    value="30"
+                    min="1"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Output Format
+                </label>
+
+                <input
+                    type="text"
+                    value="WebM"
+                    disabled
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="quick-buttons">
+
+            <button onclick="setTime(10)">
+                10 sec
+            </button>
+
+            <button onclick="setTime(30)">
+                30 sec
+            </button>
+
+            <button onclick="setTime(50)">
+                50 sec
+            </button>
+
+            <button onclick="setTime(60)">
+                1 min
+            </button>
+
+            <button onclick="setTime(120)">
+                2 min
+            </button>
+
+        </div>
+
+
+        <button
+            class="start-btn"
+            id="startBtn"
+            disabled
+            onclick="startSplitting()"
+        >
+            ✂️ Split Video
+        </button>
+
+    </div>
+
+
+    <!-- Progress -->
+    <div class="card progress-section" id="progressSection">
+
+        <div class="progress-text">
+
+            <span id="progressLabel">
+                Preparing...
+            </span>
+
+            <span id="progressPercent">
+                0%
+            </span>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div
+                class="progress-fill"
+                id="progressFill"
+            ></div>
+
+        </div>
+
+        <div
+            class="status"
+            id="status"
+        >
+            Starting...
+        </div>
+
+    </div>
+
+
+    <!-- Results -->
+    <div class="card results" id="results">
+
+        <div class="results-header">
+
+            <h2>
+                🎉 Split Complete
+            </h2>
+
+            <button
+                class="download-all"
+                onclick="downloadAll()"
+            >
+                ⬇ Download All
+            </button>
+
+        </div>
+
+        <div id="partsList"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const videoInput =
+        document.getElementById("videoInput");
+
+    const video =
+        document.getElementById("video");
+
+    const videoWrapper =
+        document.getElementById("videoWrapper");
+
+    const startBtn =
+        document.getElementById("startBtn");
+
+    const fileName =
+        document.getElementById("fileName");
+
+    const videoDuration =
+        document.getElementById("videoDuration");
+
+    const message =
+        document.getElementById("message");
+
+    const progressSection =
+        document.getElementById("progressSection");
+
+    const progressFill =
+        document.getElementById("progressFill");
+
+    const progressPercent =
+        document.getElementById("progressPercent");
+
+    const progressLabel =
+        document.getElementById("progressLabel");
+
+    const status =
+        document.getElementById("status");
+
+    const results =
+        document.getElementById("results");
+
+    const partsList =
+        document.getElementById("partsList");
+
+
+    let selectedFile = null;
+
+    let generatedParts = [];
+
+    let isSplitting = false;
+
+
+    // -------------------------------
+    // Upload Video
+    // -------------------------------
+
+    videoInput.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        selectedFile = file;
+
+        generatedParts = [];
+
+        results.style.display = "none";
+
+        hideMessage();
+
+
+        const url = URL.createObjectURL(file);
+
+        video.src = url;
+
+        videoWrapper.style.display = "block";
+
+        fileName.textContent = file.name;
+
+        startBtn.disabled = false;
+
+    });
+
+
+    // -------------------------------
+    // Video Metadata
+    // -------------------------------
+
+    video.addEventListener("loadedmetadata", function () {
+
+        videoDuration.textContent =
+            formatTime(video.duration);
+
+    });
+
+
+    // -------------------------------
+    // Quick Time Buttons
+    // -------------------------------
+
+    function setTime(seconds) {
+
+        document.getElementById(
+            "splitSeconds"
+        ).value = seconds;
+
+    }
+
+
+    // -------------------------------
+    // Start Splitting
+    // -------------------------------
+
+    async function startSplitting() {
+
+        if (!selectedFile) {
+
+            showMessage(
+                "Please select a video first."
+            );
+
+            return;
+        }
+
+
+        if (
+            !video.captureStream &&
+            !video.mozCaptureStream
+        ) {
+
+            showMessage(
+                "Your browser does not support video capture. Please use the latest Google Chrome or Microsoft Edge."
+            );
+
+            return;
+        }
+
+
+        const splitSeconds = parseFloat(
+            document.getElementById(
+                "splitSeconds"
+            ).value
+        );
+
+
+        if (
+            !splitSeconds ||
+            splitSeconds <= 0
+        ) {
+
+            showMessage(
+                "Please enter a valid split duration."
+            );
+
+            return;
+        }
+
+
+        if (isSplitting) {
+            return;
+        }
+
+
+        isSplitting = true;
+
+        startBtn.disabled = true;
+
+        results.style.display = "none";
+
+        progressSection.style.display = "block";
+
+        generatedParts = [];
+
+        partsList.innerHTML = "";
+
+        hideMessage();
+
+
+        try {
+
+            // Wait until metadata is ready
+            if (!video.duration) {
+
+                await waitForMetadata();
+
+            }
+
+
+            const duration = video.duration;
+
+
+            const totalParts =
+                Math.ceil(
+                    duration / splitSeconds
+                );
+
+
+            progressLabel.textContent =
+                `0 / ${totalParts} parts`;
+
+
+            // Check browser support
+            const stream =
+                getVideoStream();
+
+
+            if (!stream) {
+
+                throw new Error(
+                    "Could not capture video stream."
+                );
+
+            }
+
+
+            // Create every part
+            for (
+                let i = 0;
+                i < totalParts;
+                i++
+            ) {
+
+                const start =
+                    i * splitSeconds;
+
+                const end =
+                    Math.min(
+                        start + splitSeconds,
+                        duration
+                    );
+
+
+                progressLabel.textContent =
+                    `Processing Part ${i + 1} of ${totalParts}`;
+
+                status.textContent =
+                    `Creating Part ${i + 1}...`;
+
+
+                const blob =
+                    await recordSegment(
+                        start,
+                        end,
+                        stream
+                    );
+
+
+                generatedParts.push({
+
+                    blob: blob,
+
+                    name:
+                        `Part ${i + 1}.webm`,
+
+                    duration:
+                        end - start
+
+                });
+
+
+                updateProgress(
+                    ((i + 1) / totalParts) * 100
+                );
+
+            }
+
+
+            // Display results
+            displayResults();
+
+
+            status.textContent =
+                "All parts created successfully!";
+
+
+            progressLabel.textContent =
+                `${totalParts} / ${totalParts} parts`;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                "Error: " + error.message
+            );
+
+        } finally {
+
+            isSplitting = false;
+
+            startBtn.disabled = false;
+
+        }
+
+    }
+
+
+    // -------------------------------
+    // Get Capture Stream
+    // -------------------------------
+
+    function getVideoStream() {
+
+        if (video.captureStream) {
+
+            return video.captureStream();
+
+        }
+
+        if (video.mozCaptureStream) {
+
+            return video.mozCaptureStream();
+
+        }
+
+        return null;
+
+    }
+
+
+    // -------------------------------
+    // Record One Segment
+    // -------------------------------
+
+    function recordSegment(
+        startTime,
+        endTime,
+        stream
+    ) {
+
+        return new Promise(
+            async (resolve, reject) => {
+
+                try {
+
+                    // Stop video
+                    video.pause();
+
+
+                    // Move to start time
+                    await seekVideo(startTime);
+
+
+                    // Select supported MIME type
+                    const mimeType =
+                        getSupportedMimeType();
+
+
+                    const options =
+                        mimeType
+                            ? {
+                                mimeType: mimeType
+                            }
+                            : undefined;
+
+
+                    const recorder =
+                        new MediaRecorder(
+                            stream,
+                            options
+                        );
+
+
+                    const chunks = [];
+
+
+                    recorder.ondataavailable =
+                        function (event) {
+
+                            if (
+                                event.data &&
+                                event.data.size > 0
+                            ) {
+
+                                chunks.push(
+                                    event.data
+                                );
+
+                            }
+
+                        };
+
+
+                    recorder.onerror =
+                        function (event) {
+
+                            reject(
+                                event.error ||
+                                new Error(
+                                    "Recording failed."
+                                )
+                            );
+
+                        };
+
+
+                    recorder.onstop =
+                        function () {
+
+                            const blob =
+                                new Blob(
+                                    chunks,
+                                    {
+                                        type:
+                                            mimeType ||
+                                            "video/webm"
+                                    }
+                                );
+
+
+                            resolve(blob);
+
+                        };
+
+
+                    // Start recording
+                    recorder.start();
+
+
+                    // Play from beginning of segment
+                    await video.play();
+
+
+                    // Calculate segment duration
+                    const segmentDuration =
+                        endTime - startTime;
+
+
+                    // Monitor video time
+                    const checkTime =
+                        setInterval(
+                            function () {
+
+                                if (
+                                    video.currentTime >=
+                                    endTime ||
+                                    video.ended
+                                ) {
+
+                                    clearInterval(
+                                        checkTime
+                                    );
+
+                                    video.pause();
+
+                                    if (
+                                        recorder.state !==
+                                        "inactive"
+                                    ) {
+
+                                        recorder.stop();
+
+                                    }
+
+                                }
+
+                            },
+                            50
+                        );
+
+
+                } catch (error) {
+
+                    reject(error);
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // -------------------------------
+    // Seek Video
+    // -------------------------------
+
+    function seekVideo(time) {
+
+        return new Promise(
+            resolve => {
+
+                if (
+                    Math.abs(
+                        video.currentTime - time
+                    ) < 0.05
+                ) {
+
+                    resolve();
+
+                    return;
+
+                }
+
+
+                function onSeeked() {
+
+                    video.removeEventListener(
+                        "seeked",
+                        onSeeked
+                    );
+
+                    resolve();
+
+                }
+
+
+                video.addEventListener(
+                    "seeked",
+                    onSeeked
+                );
+
+
+                video.currentTime = time;
+
+            }
+        );
+
+    }
+
+
+    // -------------------------------
+    // MIME Type
+    // -------------------------------
+
+    function getSupportedMimeType() {
+
+        const types = [
+
+            "video/webm;codecs=vp9,opus",
+
+            "video/webm;codecs=vp8,opus",
+
+            "video/webm"
+
+        ];
+
+
+        for (
+            const type of types
+        ) {
+
+            if (
+                MediaRecorder.isTypeSupported(
+                    type
+                )
+            ) {
+
+                return type;
+
+            }
+
+        }
+
+
+        return "";
+
+    }
+
+
+    // -------------------------------
+    // Display Results
+    // -------------------------------
+
+    function displayResults() {
+
+        results.style.display = "block";
+
+        partsList.innerHTML = "";
+
+
+        generatedParts.forEach(
+            (part, index) => {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className = "part";
+
+
+                div.innerHTML = `
+
+                    <div class="part-top">
+
+                        <div>
+
+                            <div class="part-name">
+                                🎬 ${part.name}
+                            </div>
+
+                            <div class="part-duration">
+                                Duration:
+                                ${formatTime(part.duration)}
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="download-btn"
+                            onclick="downloadPart(${index})"
+                        >
+                            ⬇ Download
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                partsList.appendChild(div);
+
+            }
+        );
+
+
+        results.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+
+    // -------------------------------
+    // Download Single Part
+    // -------------------------------
+
+    function downloadPart(index) {
+
+        const part =
+            generatedParts[index];
+
+
+        if (!part) {
+            return;
+        }
+
+
+        const url =
+            URL.createObjectURL(
+                part.blob
+            );
+
+
+        const a =
+            document.createElement("a");
+
+
+        a.href = url;
+
+        a.download = part.name;
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        document.body.removeChild(a);
+
+
+        setTimeout(
+            () => URL.revokeObjectURL(url),
+            1000
+        );
+
+    }
+
+
+    // -------------------------------
+    // Download All
+    // -------------------------------
+
+    async function downloadAll() {
+
+        if (
+            generatedParts.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        for (
+            let i = 0;
+            i < generatedParts.length;
+            i++
+        ) {
+
+            downloadPart(i);
+
+            // Small delay between downloads
+            await sleep(500);
+
+        }
+
+    }
+
+
+    // -------------------------------
+    // Progress
+    // -------------------------------
+
+    function updateProgress(percent) {
+
+        percent =
+            Math.min(
+                100,
+                Math.max(
+                    0,
+                    percent
+                )
+            );
+
+
+        progressFill.style.width =
+            percent + "%";
+
+
+        progressPercent.textContent =
+            Math.round(percent) + "%";
+
+    }
+
+
+    // -------------------------------
+    // Format Time
+    // -------------------------------
+
+    function formatTime(seconds) {
+
+        if (
+            !isFinite(seconds)
+        ) {
+
+            return "00:00";
+
+        }
+
+
+        seconds =
+            Math.floor(seconds);
+
+
+        const hrs =
+            Math.floor(
+                seconds / 3600
+            );
+
+
+        const mins =
+            Math.floor(
+                (seconds % 3600) / 60
+            );
+
+
+        const secs =
+            seconds % 60;
+
+
+        if (hrs > 0) {
+
+            return (
+                String(hrs).padStart(2, "0") +
+                ":" +
+                String(mins).padStart(2, "0") +
+                ":" +
+                String(secs).padStart(2, "0")
+            );
+
+        }
+
+
+        return (
+            String(mins).padStart(2, "0") +
+            ":" +
+            String(secs).padStart(2, "0")
+        );
+
+    }
+
+
+    // -------------------------------
+    // Wait Metadata
+    // -------------------------------
+
+    function waitForMetadata() {
+
+        return new Promise(
+            resolve => {
+
+                video.addEventListener(
+                    "loadedmetadata",
+                    resolve,
+                    {
+                        once: true
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    // -------------------------------
+    // Sleep
+    // -------------------------------
+
+    function sleep(ms) {
+
+        return new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    ms
+                )
+        );
+
+    }
+
+
+    // -------------------------------
+    // Messages
+    // -------------------------------
+
+    function showMessage(text) {
+
+        message.textContent = text;
+
+        message.style.display = "block";
+
+    }
+
+
+    function hideMessage() {
+
+        message.style.display = "none";
+
+    }
+
+</script>
+
+</body>
+</html>
