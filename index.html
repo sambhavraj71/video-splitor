@@ -324,6 +324,18 @@
             letter-spacing: 0.5px;
         }
 
+        .upload-box .size-limit {
+            margin-top: 12px;
+            display: inline-block;
+            font-size: 12px;
+            color: #7cf5b0;
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+
         /* ========== VIDEO PREVIEW ========== */
         .video-wrapper {
             display: none;
@@ -497,6 +509,46 @@
             cursor: not-allowed;
             filter: grayscale(0.6);
             box-shadow: none;
+        }
+
+        /* ========== SIZE LIMIT WARNING ========== */
+        .size-warning {
+            display: none;
+            width: 100%;
+            margin-top: 22px;
+            padding: 18px 20px;
+            border-radius: 12px;
+            background: rgba(255, 82, 82, 0.08);
+            border: 1.5px solid rgba(255, 82, 82, 0.4);
+            color: #ff8a8a;
+            font-size: 14.5px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.6;
+            animation: shake 0.4s ease;
+        }
+
+        .size-warning .size-warning-title {
+            display: block;
+            font-size: 17px;
+            font-weight: 800;
+            color: #ff5252;
+            margin-bottom: 8px;
+        }
+
+        .size-warning strong {
+            color: #ffb3b3;
+            font-weight: 800;
+        }
+
+        .size-warning .size-warning-hint {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #ffb3b3;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255, 82, 82, 0.3);
         }
 
         /* ========== PROGRESS ========== */
@@ -904,6 +956,7 @@
                 <span class="format-tag">MKV</span>
                 <span class="format-tag">AVI</span>
             </div>
+            <span class="size-limit">📦 Max file size: 450 MB</span>
         </label>
 
         <div class="video-wrapper" id="videoWrapper">
@@ -952,9 +1005,18 @@
             <button onclick="setTime(300)">5 min</button>
         </div>
 
+        <!-- Split button (shown when video ≤ 450 MB) -->
         <button class="start-btn" id="startBtn" disabled onclick="startSplitting()">
             ✂️ Split Video Now
         </button>
+
+        <!-- Size warning (shown when video > 450 MB) -->
+        <div class="size-warning" id="sizeWarning">
+            <span class="size-warning-title">⚠️ File Too Large</span>
+            This video is larger than <strong>450 MB</strong>.<br>
+            Please re-upload a video under <strong>450 MB</strong>.
+            <span class="size-warning-hint">💡 Tip: Trim or compress the video first, then try again.</span>
+        </div>
     </div>
 
 
@@ -1006,12 +1068,19 @@
     let ffmpegLoaded = false;
 
     // ==========================================
+    // File Size Limit
+    // ==========================================
+    const MAX_SIZE_MB = 450;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+    // ==========================================
     // DOM Elements
     // ==========================================
     const videoInput = document.getElementById("videoInput");
     const video = document.getElementById("video");
     const videoWrapper = document.getElementById("videoWrapper");
     const startBtn = document.getElementById("startBtn");
+    const sizeWarning = document.getElementById("sizeWarning");
     const fileName = document.getElementById("fileName");
     const videoDuration = document.getElementById("videoDuration");
     const message = document.getElementById("message");
@@ -1075,7 +1144,7 @@
     }
 
     // ==========================================
-    // Upload Video
+    // Upload Video (with 450 MB size check)
     // ==========================================
     videoInput.addEventListener("change", function () {
         const file = this.files[0];
@@ -1087,11 +1156,32 @@
         hideMessage();
         hideInfo();
 
+        // Always show video preview
         const url = URL.createObjectURL(file);
         video.src = url;
         videoWrapper.style.display = "block";
         fileName.textContent = "📁 " + file.name;
-        startBtn.disabled = false;
+
+        const sizeMB = file.size / (1024 * 1024);
+
+        // Check if file exceeds 450 MB
+        if (file.size > MAX_SIZE_BYTES) {
+            // Hide split button, show warning
+            startBtn.style.display = "none";
+            sizeWarning.style.display = "block";
+            sizeWarning.innerHTML = `
+                <span class="size-warning-title">⚠️ File Too Large</span>
+                This video is <strong>${Math.round(sizeMB)} MB</strong> — larger than the <strong>${MAX_SIZE_MB} MB</strong> limit.<br>
+                Please re-upload a video under <strong>${MAX_SIZE_MB} MB</strong>.
+                <span class="size-warning-hint">💡 Tip: Trim or compress the video first, then try again.</span>
+            `;
+            startBtn.disabled = true;
+        } else {
+            // Normal case: show split button, hide warning
+            startBtn.style.display = "block";
+            sizeWarning.style.display = "none";
+            startBtn.disabled = false;
+        }
 
         // Auto-scroll to video
         setTimeout(() => {
@@ -1122,6 +1212,12 @@
             return;
         }
         if (isSplitting) return;
+
+        // Safety net: double-check file size
+        if (selectedFile.size > MAX_SIZE_BYTES) {
+            showMessage(`File is larger than ${MAX_SIZE_MB} MB. Please re-upload a smaller video.`);
+            return;
+        }
 
         const splitSeconds = parseFloat(document.getElementById("splitSeconds").value);
         if (!splitSeconds || splitSeconds <= 0) {
