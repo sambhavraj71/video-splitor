@@ -4,429 +4,854 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Meta Tags -->
-    <title>Free Video Splitter – Split Video Online Without Watermark | Tech by Sambhav</title>
-    <meta name="description" content="Split long videos into multiple parts online for free. No watermark, no sign-up. Fast & secure video splitter by Tech by Sambhav. Works with MP4, WebM, MOV, MKV.">
-    <meta name="keywords" content="video splitter, split video online, free video splitter, video cutter, split mp4, split webm, video splitter without watermark, Tech by Sambhav, video trimmer, split long video">
+    <!-- ========== SEO META TAGS ========== -->
+    <title>Free Video Splitter Online – Split Video Without Watermark | Tech by Sambhav</title>
+    <meta name="description" content="Split long videos into multiple parts online for free. No watermark, no signup, no upload. Fast & secure video splitter by Tech by Sambhav. Supports MP4, WebM, MOV, MKV, AVI.">
+    <meta name="keywords" content="video splitter, split video online, free video splitter, video cutter, split mp4, split webm, split long video, video splitter without watermark, online video splitter, Tech by Sambhav, video trimmer, split video into parts, video breaker">
     <meta name="author" content="Tech by Sambhav">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://tbs-video-splitor.vercel.app/">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://video-splitter.sambhav.tech/">
     
-    <!-- Open Graph / Social -->
+    <!-- ========== OPEN GRAPH ========== -->
     <meta property="og:title" content="Free Video Splitter – Split Videos Online | Tech by Sambhav">
     <meta property="og:description" content="Split long videos into multiple parts instantly. 100% free, no watermark. Try the fastest online video splitter.">
-    <meta property="og:image" content="logo.jpg">
+    <meta property="og:image" content="vslogo.png">
     <meta property="og:url" content="https://video-splitter.sambhav.tech/">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Tech by Sambhav">
+    
+    <!-- ========== TWITTER CARD ========== -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Free Video Splitter – Tech by Sambhav">
     <meta name="twitter:description" content="Split videos online for free. No watermark, no signup.">
-    <meta name="twitter:image" content="logo.jpg">
+    <meta name="twitter:image" content="vslogo.png">
     
-    <!-- Favicon / Logo -->
+    <!-- ========== FAVICON & LOGO ========== -->
     <link rel="icon" type="image/png" href="vslogo.png">
     <link rel="apple-touch-icon" href="vslogo.png">
+    <link rel="shortcut icon" href="vslogo.png">
     
-    <!-- FFmpeg -->
+    <!-- ========== STRUCTURED DATA (SEO BOOST) ========== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Video Splitter by Tech by Sambhav",
+      "url": "https://video-splitter.sambhav.tech/",
+      "description": "Free online video splitter. Split long videos into multiple parts without watermark.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "Tech by Sambhav"
+      }
+    }
+    </script>
+    
+    <!-- ========== FFMPEG ========== -->
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
     <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
 
     <style>
+        /* ========== RESET & BASE ========== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #080b14;
+            --bg-secondary: #0f1626;
+            --bg-card: #131c30;
+            --bg-elevated: #1a2338;
+            --border: #2a3650;
+            --border-hover: #3d4d6e;
+            --accent: #00e676;
+            --accent-glow: rgba(0, 230, 118, 0.4);
+            --accent-secondary: #00d4ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b3cc;
+            --text-muted: #6b7a99;
+            --danger: #ff5252;
+            --success: #00e676;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: #0b1020;
-            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 30px 15px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ========== ANIMATED BACKGROUND ========== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(0, 230, 118, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(0, 212, 255, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
-            margin: auto;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Header with logo */
-        .header {
+        /* ========== HEADER / HERO ========== */
+        .hero {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 45px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
+        .logo-wrapper {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .logo-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #00e676, #00d4ff, #00e676);
+            opacity: 0.5;
+            filter: blur(15px);
+            animation: rotateGlow 6s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotateGlow {
+            to { transform: rotate(360deg); }
+        }
+
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #00ff66;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
-            margin-bottom: 15px;
-            background: #141b2f;
+            border: 3px solid var(--bg-card);
+            background: var(--bg-card);
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.25);
+            display: block;
+            position: relative;
+            z-index: 1;
         }
 
-        .header h1 {
-            font-size: 38px;
-            margin-bottom: 10px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+        .hero h1 {
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
         }
 
-        .header h1 span {
-            color: #00ff66;
-            text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+        .hero h1 .accent {
+            background: linear-gradient(135deg, #00e676 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .header p {
-            color: #aeb7cc;
-            font-size: 16px;
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 17px;
+            max-width: 540px;
+            margin: 0 auto;
         }
 
-        /* Card style */
+        .badge-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 22px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px solid rgba(0, 230, 118, 0.25);
+            color: #7cf5b0;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ========== CARD ========== */
         .card {
-            background: #141b2f;
-            border: 1px solid #293451;
-            border-radius: 18px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
         }
 
+        .card-title {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .card-title .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #00e676, #00d4ff);
+            color: #06100b;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        /* ========== UPLOAD BOX ========== */
         .upload-box {
-            border: 2px dashed #435070;
-            border-radius: 15px;
-            padding: 40px 20px;
+            border: 2px dashed var(--border-hover);
+            border-radius: 16px;
+            padding: 50px 25px;
             text-align: center;
             cursor: pointer;
-            transition: 0.3s;
-            background: rgba(0, 255, 102, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 230, 118, 0.015);
+            display: block;
+            position: relative;
         }
 
         .upload-box:hover {
-            border-color: #00ff66;
-            background: #18243a;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.1);
+            border-color: var(--accent);
+            background: rgba(0, 230, 118, 0.04);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -20px var(--accent-glow);
         }
 
         .upload-box input {
             display: none;
         }
 
-        .upload-icon {
-            font-size: 50px;
-            margin-bottom: 15px;
+        .upload-icon-wrap {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.15), rgba(0, 212, 255, 0.1));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .upload-box:hover .upload-icon-wrap {
+            transform: scale(1.08) rotate(-5deg);
         }
 
         .upload-box h3 {
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 18px;
         }
 
         .upload-box p {
-            color: #9ca8c0;
+            color: var(--text-muted);
             font-size: 14px;
         }
 
+        .upload-box .formats {
+            margin-top: 14px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .format-tag {
+            font-size: 11px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== VIDEO PREVIEW ========== */
         .video-wrapper {
             display: none;
-            margin-top: 20px;
+            margin-top: 22px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         video {
             width: 100%;
             max-height: 450px;
-            border-radius: 12px;
-            background: black;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            border-radius: 14px;
+            background: #000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: block;
         }
 
         .video-info {
             display: flex;
             justify-content: space-between;
             gap: 10px;
-            margin-top: 12px;
-            color: #aeb7cc;
-            font-size: 14px;
-            padding: 0 5px;
+            margin-top: 14px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding: 10px 14px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            border: 1px solid var(--border);
         }
 
+        .video-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ========== SETTINGS ========== */
         .settings {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 18px;
         }
 
         .field label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #b9c2d5;
-            font-weight: 500;
+            margin-bottom: 9px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
         }
 
         .field input,
         .field select {
             width: 100%;
-            padding: 13px;
-            border: 1px solid #394663;
-            background: #0e1528;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border);
+            background: var(--bg-secondary);
             color: white;
-            border-radius: 9px;
+            border-radius: 11px;
             outline: none;
             font-size: 16px;
-            transition: border-color 0.2s;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
         }
 
         .field input:focus,
         .field select:focus {
-            border-color: #00ff66;
-            box-shadow: 0 0 0 3px rgba(0, 255, 102, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.1);
+            background: var(--bg-elevated);
+        }
+
+        .field select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a8b3cc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 42px;
         }
 
         .field select option {
-            background: #0e1528;
+            background: var(--bg-secondary);
             color: white;
         }
 
+        /* ========== QUICK BUTTONS ========== */
         .quick-buttons {
-            margin-top: 15px;
+            margin-top: 18px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .quick-buttons button {
-            background: #202b45;
-            color: white;
-            border: 1px solid #3c4965;
-            padding: 9px 16px;
-            border-radius: 8px;
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border);
+            padding: 9px 18px;
+            border-radius: 100px;
             cursor: pointer;
-            transition: 0.2s;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: inherit;
         }
 
         .quick-buttons button:hover {
-            border-color: #00ff66;
-            background: #2a3a5a;
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 230, 118, 0.05);
             transform: translateY(-1px);
         }
 
+        /* ========== START BUTTON ========== */
         .start-btn {
             width: 100%;
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 22px;
+            padding: 17px;
             border: none;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #00ff66, #00d9ff);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00e676 0%, #00d4ff 100%);
             color: #06100b;
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 17px;
+            font-weight: 800;
             cursor: pointer;
-            transition: 0.2s;
-            letter-spacing: 0.5px;
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px var(--accent-glow);
         }
 
-        .start-btn:hover {
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .start-btn:hover:not(:disabled)::after {
+            left: 100%;
+        }
+
+        .start-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 255, 102, 0.3);
+            box-shadow: 0 15px 40px -10px var(--accent-glow);
+        }
+
+        .start-btn:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .start-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.35;
             cursor: not-allowed;
-            transform: none;
+            filter: grayscale(0.6);
             box-shadow: none;
         }
 
+        /* ========== PROGRESS ========== */
         .progress-section {
             display: none;
+            animation: fadeInUp 0.4s ease;
         }
 
         .progress-text {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            color: #c5cee0;
-            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .progress-percent {
+            color: var(--accent);
+            font-weight: 800;
         }
 
         .progress-bar {
             width: 100%;
-            height: 12px;
-            background: #252e43;
-            border-radius: 20px;
+            height: 10px;
+            background: var(--bg-secondary);
+            border-radius: 100px;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         .progress-fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #00ff66, #00c8ff);
-            transition: width 0.2s;
-            border-radius: 20px;
+            background: linear-gradient(90deg, #00e676, #00d4ff);
+            transition: width 0.3s ease;
+            border-radius: 100px;
+            box-shadow: 0 0 15px var(--accent-glow);
         }
 
         .status {
             text-align: center;
-            margin-top: 15px;
-            color: #00ff66;
+            margin-top: 16px;
+            color: var(--accent);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
+        .ffmpeg-status {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        /* ========== RESULTS ========== */
         .results {
             display: none;
+            animation: fadeInUp 0.5s ease;
         }
 
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
         }
 
-        .download-all {
-            border: none;
-            background: #6c2cff;
-            color: white;
-            padding: 11px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .download-all:hover {
-            background: #7d3dff;
-            transform: translateY(-1px);
-        }
-
-        .part {
-            background: #0e1528;
-            border: 1px solid #293451;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            transition: 0.2s;
-        }
-
-        .part:hover {
-            border-color: #00ff66;
-            background: #111a2e;
-        }
-
-        .part-top {
+        .results-header h2 {
+            font-size: 21px;
+            font-weight: 800;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             gap: 10px;
         }
 
+        .download-all {
+            border: none;
+            background: linear-gradient(135deg, #7c3aed, #6c2cff);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-all:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -8px rgba(124, 58, 237, 0.6);
+        }
+
+        /* ========== PART ITEM ========== */
+        .part {
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.25s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .part:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+            transform: translateX(3px);
+        }
+
+        .part-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .part-thumb {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.15), rgba(0, 212, 255, 0.1));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .part-details {
+            min-width: 0;
+            flex: 1;
+        }
+
         .part-name {
-            font-weight: bold;
-            color: #e0e6f0;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .part-duration {
-            color: #8f9bb3;
-            font-size: 13px;
-            margin-top: 5px;
+            color: var(--text-muted);
+            font-size: 12.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .download-btn {
-            background: #00c853;
+            background: var(--accent);
             color: #06100b;
             border: none;
-            padding: 9px 15px;
-            border-radius: 7px;
+            padding: 10px 18px;
+            border-radius: 9px;
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
+            font-weight: 800;
+            font-size: 13px;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .download-btn:hover {
-            background: #00e05e;
+            background: #00ff85;
             transform: translateY(-1px);
+            box-shadow: 0 8px 20px -6px var(--accent-glow);
         }
 
+        /* ========== MESSAGES ========== */
         .message {
             display: none;
-            background: #341b1b;
-            border: 1px solid #743535;
-            color: #ff9d9d;
-            padding: 12px;
-            border-radius: 8px;
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.35);
+            color: #ff8a8a;
+            padding: 14px 18px;
+            border-radius: 12px;
             margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .info-message {
             display: none;
-            background: #172b35;
-            border: 1px solid #2e6173;
-            color: #9eeaff;
-            padding: 12px;
-            border-radius: 8px;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            color: #7ee0ff;
+            padding: 14px 18px;
+            border-radius: 12px;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-size: 13.5px;
+            font-weight: 500;
         }
 
-        .ffmpeg-status {
-            text-align: center;
-            color: #aeb7cc;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
+        /* ========== FOOTER ========== */
         .footer {
-            margin-top: 30px;
+            margin-top: 50px;
             text-align: center;
-            color: #6c7a96;
+            color: var(--text-muted);
             font-size: 13px;
-            padding: 20px 0;
-            border-top: 1px solid #1e2a42;
+            padding: 25px 20px;
+            border-top: 1px solid var(--border);
             width: 100%;
-            max-width: 900px;
+            max-width: 920px;
         }
 
         .footer strong {
-            color: #00ff66;
-            font-weight: 600;
+            background: linear-gradient(135deg, #00e676, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
         }
 
-        @media (max-width: 650px) {
-            .header h1 {
-                font-size: 28px;
+        .footer .heart {
+            color: #ff5252;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 680px) {
+            .container {
+                padding: 25px 14px 40px;
             }
+
+            .hero h1 {
+                font-size: 30px;
+                letter-spacing: -0.8px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .logo {
+                width: 75px;
+                height: 75px;
+            }
+
+            .card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
             .settings {
                 grid-template-columns: 1fr;
+                gap: 14px;
             }
+
+            .upload-box {
+                padding: 35px 18px;
+            }
+
+            .upload-icon-wrap {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
             .results-header {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .part-top {
+
+            .download-all {
+                justify-content: center;
+            }
+
+            .part {
                 flex-direction: column;
                 align-items: stretch;
+                padding: 16px;
             }
+
             .download-btn {
                 width: 100%;
+                justify-content: center;
             }
-            .logo {
-                width: 65px;
-                height: 65px;
+
+            .quick-buttons button {
+                flex: 1;
+                min-width: 70px;
+                text-align: center;
+                padding: 9px 10px;
+                font-size: 13px;
             }
+
+            .badge-row {
+                gap: 7px;
+            }
+
+            .badge {
+                font-size: 11.5px;
+                padding: 5px 11px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hero h1 {
+                font-size: 26px;
+            }
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
+
+        /* ========== SELECTION ========== */
+        ::selection {
+            background: var(--accent);
+            color: #06100b;
         }
     </style>
 </head>
@@ -435,46 +860,73 @@
 
 <div class="container">
 
-    <!-- Header with logo -->
-    <div class="header">
-        <img src="logo.jpg" alt="Tech by Sambhav – Video Splitter Logo" class="logo" />
-        <h1>Video <span>Splitter</span></h1>
-        <p>Split your long video into multiple smaller parts — free, fast, no watermark</p>
-    </div>
+    <!-- ========== HERO HEADER ========== -->
+    <header class="hero">
+        <div class="logo-wrapper">
+            <img src="vslogo.png" alt="Video Splitter – Tech by Sambhav Logo" class="logo">
+        </div>
+        <h1>Video <span class="accent">Splitter</span></h1>
+        <p>Split long videos into multiple parts in seconds — free, no watermark, no upload to server</p>
+        
+        <div class="badge-row">
+            <span class="badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                100% Free
+            </span>
+            <span class="badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                No Watermark
+            </span>
+            <span class="badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Private & Secure
+            </span>
+        </div>
+    </header>
 
 
-    <!-- Upload -->
+    <!-- ========== UPLOAD CARD ========== -->
     <div class="card">
+        <div class="card-title">
+            <span class="num">1</span>
+            Upload Video
+        </div>
 
         <label class="upload-box" for="videoInput">
             <input type="file" id="videoInput" accept="video/*">
-            <div class="upload-icon">🎬</div>
-            <h3>Upload Your Video</h3>
-            <p>Click here and select your video (MP4, WebM, MOV, MKV, AVI)</p>
+            <div class="upload-icon-wrap">🎬</div>
+            <h3>Click to Upload Your Video</h3>
+            <p>Drop your video file here or browse from your device</p>
+            <div class="formats">
+                <span class="format-tag">MP4</span>
+                <span class="format-tag">WEBM</span>
+                <span class="format-tag">MOV</span>
+                <span class="format-tag">MKV</span>
+                <span class="format-tag">AVI</span>
+            </div>
         </label>
 
         <div class="video-wrapper" id="videoWrapper">
             <video id="video" controls></video>
             <div class="video-info">
-                <span id="fileName">No file</span>
-                <span id="videoDuration">00:00</span>
+                <span id="fileName">📁 No file selected</span>
+                <span id="videoDuration">⏱ 00:00</span>
             </div>
         </div>
-
     </div>
 
 
-    <!-- Error -->
+    <!-- ========== MESSAGES ========== -->
     <div class="message" id="message"></div>
-
-    <!-- Information -->
     <div class="info-message" id="infoMessage"></div>
 
 
-    <!-- Settings -->
+    <!-- ========== SETTINGS CARD ========== -->
     <div class="card">
-
-        <h2 style="margin-bottom:20px; font-weight:600;">Split Settings</h2>
+        <div class="card-title">
+            <span class="num">2</span>
+            Split Settings
+        </div>
 
         <div class="settings">
             <div class="field">
@@ -485,7 +937,7 @@
             <div class="field">
                 <label>Output Format</label>
                 <select id="outputFormat">
-                    <option value="mp4">MP4</option>
+                    <option value="mp4">MP4 (Recommended)</option>
                     <option value="webm">WebM</option>
                 </select>
             </div>
@@ -497,20 +949,24 @@
             <button onclick="setTime(50)">50 sec</button>
             <button onclick="setTime(60)">1 min</button>
             <button onclick="setTime(120)">2 min</button>
+            <button onclick="setTime(300)">5 min</button>
         </div>
 
         <button class="start-btn" id="startBtn" disabled onclick="startSplitting()">
-            ✂️ Split Video
+            ✂️ Split Video Now
         </button>
-
     </div>
 
 
-    <!-- Progress -->
+    <!-- ========== PROGRESS CARD ========== -->
     <div class="card progress-section" id="progressSection">
+        <div class="card-title">
+            <span class="num">3</span>
+            Processing
+        </div>
         <div class="progress-text">
             <span id="progressLabel">Preparing...</span>
-            <span id="progressPercent">0%</span>
+            <span class="progress-percent" id="progressPercent">0%</span>
         </div>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
@@ -520,7 +976,7 @@
     </div>
 
 
-    <!-- Results -->
+    <!-- ========== RESULTS CARD ========== -->
     <div class="card results" id="results">
         <div class="results-header">
             <h2>🎉 Split Complete</h2>
@@ -531,10 +987,12 @@
 
 </div>
 
-<!-- Footer with Tech by Sambhav branding -->
-<div class="footer">
-    Made with <strong>Tech by Sambhav</strong> — Free Video Splitter. No upload to server, all processing in your browser.
-</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    Made with <span class="heart">❤</span> by <strong>Tech by Sambhav</strong><br>
+    Free Video Splitter · All processing happens in your browser · Your files never leave your device
+</footer>
 
 
 <script>
@@ -596,8 +1054,8 @@
         if (ffmpegLoaded) return;
 
         try {
-            status.textContent = "Loading FFmpeg...";
-            ffmpegStatus.textContent = "First-time setup. Please wait...";
+            status.textContent = "Loading FFmpeg engine...";
+            ffmpegStatus.textContent = "First-time setup. Please wait a moment...";
             progressSection.style.display = "block";
 
             const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
@@ -608,7 +1066,7 @@
             });
 
             ffmpegLoaded = true;
-            ffmpegStatus.textContent = "FFmpeg is ready.";
+            ffmpegStatus.textContent = "✅ FFmpeg is ready.";
 
         } catch (error) {
             console.error(error);
@@ -632,15 +1090,20 @@
         const url = URL.createObjectURL(file);
         video.src = url;
         videoWrapper.style.display = "block";
-        fileName.textContent = file.name;
+        fileName.textContent = "📁 " + file.name;
         startBtn.disabled = false;
+
+        // Auto-scroll to video
+        setTimeout(() => {
+            videoWrapper.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 200);
     });
 
     // ==========================================
     // Metadata
     // ==========================================
     video.addEventListener("loadedmetadata", function () {
-        videoDuration.textContent = formatTime(video.duration);
+        videoDuration.textContent = "⏱ " + formatTime(video.duration);
     });
 
     // ==========================================
@@ -666,7 +1129,7 @@
             return;
         }
         if (!video.duration) {
-            showMessage("Video metadata is not ready yet.");
+            showMessage("Video metadata is not ready yet. Please wait.");
             return;
         }
 
@@ -701,9 +1164,9 @@
             const sameContainer = (inputExtension === format);
 
             if (sameContainer) {
-                showInfo("Fast mode: FFmpeg will split without re-encoding whenever possible.");
+                showInfo("⚡ Fast mode: Splitting without re-encoding. This will be quick!");
             } else {
-                showInfo(`Format conversion: ${inputExtension.toUpperCase()} → ${format.toUpperCase()}. This requires video encoding and may take longer.`);
+                showInfo(`🔄 Format conversion: ${inputExtension.toUpperCase()} → ${format.toUpperCase()}. This requires encoding and may take longer.`);
             }
 
             // Create parts
@@ -714,7 +1177,7 @@
                 const outputName = `part_${partNumber}.${extension}`;
 
                 progressLabel.textContent = `Processing Part ${i + 1} of ${totalParts}`;
-                status.textContent = `Creating Part ${i + 1}...`;
+                status.textContent = `✂️ Creating Part ${i + 1}...`;
 
                 // FAST MODE (same container)
                 if (sameContainer) {
@@ -788,7 +1251,7 @@
             }
 
             // Complete
-            status.textContent = "All parts created successfully!";
+            status.textContent = "✅ All parts created successfully!";
             progressLabel.textContent = `${totalParts} / ${totalParts} parts`;
             updateProgress(100);
             displayResults();
@@ -796,7 +1259,7 @@
         } catch (error) {
             console.error(error);
             showMessage("Error: " + (error.message || "Video processing failed."));
-            status.textContent = "Processing failed.";
+            status.textContent = "❌ Processing failed.";
         } finally {
             isSplitting = false;
             startBtn.disabled = false;
@@ -824,18 +1287,21 @@
             div.className = "part";
 
             div.innerHTML = `
-                <div class="part-top">
-                    <div>
-                        <div class="part-name">🎬 ${part.name}</div>
-                        <div class="part-duration">Duration: ${formatTime(part.duration)}</div>
+                <div class="part-info">
+                    <div class="part-thumb">🎬</div>
+                    <div class="part-details">
+                        <div class="part-name">${part.name}</div>
+                        <div class="part-duration">⏱ Duration: ${formatTime(part.duration)}</div>
                     </div>
-                    <button class="download-btn" onclick="downloadPart(${index})">⬇ Download</button>
                 </div>
+                <button class="download-btn" onclick="downloadPart(${index})">
+                    ⬇ Download
+                </button>
             `;
             partsList.appendChild(div);
         });
 
-        results.scrollIntoView({ behavior: "smooth" });
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     // ==========================================
@@ -862,7 +1328,7 @@
         if (generatedParts.length === 0) return;
         for (let i = 0; i < generatedParts.length; i++) {
             downloadPart(i);
-            await sleep(500);
+            await sleep(600);
         }
     }
 
@@ -907,6 +1373,9 @@
     function showMessage(text) {
         message.textContent = text;
         message.style.display = "block";
+        setTimeout(() => {
+            message.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
     }
 
     function hideMessage() {
@@ -921,6 +1390,17 @@
     function hideInfo() {
         infoMessage.style.display = "none";
     }
+
+    // ==========================================
+    // Smooth scroll for start button
+    // ==========================================
+    startBtn.addEventListener("click", function() {
+        if (!this.disabled) {
+            setTimeout(() => {
+                progressSection.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 300);
+        }
+    });
 
 </script>
 
